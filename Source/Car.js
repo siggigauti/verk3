@@ -1,3 +1,7 @@
+//Get a number between min (inclusive) and max (exclusive)
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
 function Car( lane){
 	
 	this.xPos = Math.random() * 9;
@@ -5,7 +9,7 @@ function Car( lane){
 	//Breyta sem ákveður hvort bíllinn fari frá hægri til vinstri eða öfugt.
 	this.movingLeft = false;
 	this.Color = vec4(Math.random(), Math.random(), Math.random(), 1.0);
-	this.speed = Math.random() * 0.1;
+	this.speed = getRandomArbitrary(0.15, 0.25)*0.5;
 }
 Car.prototype.updateMovement = function(){
 	
@@ -13,6 +17,7 @@ Car.prototype.updateMovement = function(){
 		this.xPos += this.speed;
 	}
 	else{
+    this.speed = getRandomArbitrary(0.15, 0.25)*0.5;
 		this.xPos = -10;
 	}
 }

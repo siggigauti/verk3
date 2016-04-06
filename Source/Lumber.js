@@ -1,3 +1,7 @@
+//Get a number between min (inclusive) and max (exclusive)
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
 function Lumber( lane){
 	
 	this.xPos = Math.random() * 9;
@@ -5,7 +9,7 @@ function Lumber( lane){
 	//Breyta sem ákveður hvort bíllinn fari frá hægri til vinstri eða öfugt.
 	this.movingLeft = false;
 	this.Color = vec4(0.6, 0.3, 0, 1.0);
-	this.speed = Math.random() * 0.1;
+	this.speed = getRandomArbitrary(0.15, 0.2)*0.5;
 }
 Lumber.prototype.updateMovement = function(){
 	
@@ -13,6 +17,7 @@ Lumber.prototype.updateMovement = function(){
 		this.xPos += this.speed;
 	}
 	else{
+    this.speed = getRandomArbitrary(0.15, 0.2)*0.5;
 		this.xPos = -10;
 	}
 }
