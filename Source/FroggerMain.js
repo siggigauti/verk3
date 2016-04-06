@@ -14,20 +14,17 @@ var spinY = 0;
 var origX;
 var origY;
 var numCubeVertices  = 36;
-// variables for moving car
-var carDirection = 0.0;
-var frogXPos = 0.0;
-var frogYPos = -10.0;
 
-var carXPos = 0.0;
-var carYPos = 0.0;
+
 
 var height = 0.0;
 var turn = 0.0;
 
 
+var frog;
 var cars = [];
 var lumbers = [];
+var numCarsPerLane = 2;
 
 var colorLoc;
 var mvLoc;
@@ -63,24 +60,24 @@ var cVertices = [
 	//Jörðin byrjar í 36
 	
 	//Vinningssvæðið er 2x10 ferningur
-	vec3(10, 10, 0), vec3(-10, 10, 0), vec3(-10, 8, 0),
-	vec3(10, 10, 0), vec3(10, 8, 0), vec3(-10, 8, 0),
+	vec3(10.5, 10.5, 0), vec3(-10.5, 10.5, 0), vec3(-10.5, 7.5, 0),
+	vec3(10.5, 10.5, 0), vec3(10.5, 7.5, 0), vec3(-10.5, 7.5, 0),
 	
 	//Áin er 7x10 ferningur
-	vec3(10, 8, 0), vec3(-10, 8, 0), vec3(-10, 0.5, 0),
-	vec3(10, 8, 0), vec3(10, 0.5, 0), vec3(-10, 0.5, 0),
+	vec3(10.5, 7.5, 0), vec3(-10.5, 7.5, 0), vec3(-10.5, 0.5, 0),
+	vec3(10.5, 7.5, 0), vec3(10.5, 0.5, 0), vec3(-10.5, 0.5, 0),
 	
 	//Miðjusvæði er 2x10 ferningur
-	vec3(10, 0.5, 0), vec3(-10, 0.5, 0), vec3(-10, -1, 0),
-	vec3(10, 0.5, 0), vec3(10, -1, 0), vec3(-10, -1, 0),
+	vec3(10.5, 0.5, 0), vec3(-10.5, 0.5, 0), vec3(-10.5, -1.5, 0),
+	vec3(10.5, 0.5, 0), vec3(10.5, -1.5, 0), vec3(-10.5, -1.5, 0),
 	
 	//Gatan er 7x10 ferningur
-	vec3(10, -1, 0), vec3(-10, -1, 0), vec3(-10, -8, 0),
-	vec3(10, -1, 0), vec3(10, -8, 0), vec3(-10, -8, 0),
+	vec3(10.5, -1.5, 0), vec3(-10.5,  -1.5, 0), vec3(-10.5, -7.5, 0),
+	vec3(10.5, -1.5, 0), vec3(10.5, -7.5, 0), vec3(-10.5, -7.5, 0),
 	
 	//Byrjunarsvæðið er 2x10 ferningur
-	vec3(10, -8, 0), vec3(-10, -8, 0), vec3(-10, -10, 0),
-	vec3(10, -8, 0), vec3(10, -10, 0), vec3(-10, -10, 0),
+	vec3(10.5, -7.5, 0), vec3(-10.5, -7.5, 0), vec3(-10.5, -10.5, 0),
+	vec3(10.5, -7.5, 0), vec3(10.5, -10.5, 0), vec3(-10.5, -10.5, 0),
 ];
 
 // vertices of the track
@@ -96,18 +93,11 @@ window.onload = function init()
     
     gl = WebGLUtils.setupWebGL( canvas );
 	
+		initCars()
+		initLumbers();
 		
-		cars.push(new Car(-7));
-		cars.push(new Car(-5));
-		cars.push(new Car(-4));
-		cars.push(new Car(-2));
-		lumbers.push(new Lumber(1));
-		lumbers.push(new Lumber(2));
-		lumbers.push(new Lumber(3));
-		lumbers.push(new Lumber(4));
-		lumbers.push(new Lumber(5));
-		lumbers.push(new Lumber(6));
-		lumbers.push(new Lumber(7));
+		frog = new Frog();
+		
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
@@ -115,17 +105,12 @@ window.onload = function init()
     
     gl.enable(gl.DEPTH_TEST);
 
-    //
-    //  Load shaders and initialize attribute buffers
-    //
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
 
-    // VBO for the cube
     cubeBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(cVertices), gl.STATIC_DRAW );
-
 
     vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
@@ -164,21 +149,51 @@ window.onload = function init()
     window.addEventListener("keydown", function(e){
         switch( e.keyCode ) {
             case 87:	// W
-                frogYPos += 1;
+                frog.moveY(1);
                 break;
             case 83:	// S
-                frogYPos -= 1;
+                frog.moveY(-1);
                 break;
 			case 68:	// D
-				frogXPos += 1;
+				frog.moveX(1);
 				break;
 			case 65:	// A
-				frogXPos -= 1;
+				frog.moveX(-1);
 				break;
 		}
 	} );
     render();
 }
+function getRandomNumber(high, low){
+	return Math.random() * (high - low) + low;	
+}
+
+function initCars(){
+	var xMin = -10, xMax = -6, xStartPos, laneSpeed;
+	for(var i = 2; i<8; i++){
+		laneSpeed = getRandomNumber(0.02, 0.05);
+		for(var j = 0; j<numCarsPerLane; j++){
+			xStartPos = getRandomNumber(xMin, xMax);
+			cars.push( new Car(-i, xStartPos, laneSpeed) );
+			xMax += 8;
+			xMin += 8;
+		}
+		xMin = -10, xMax = -6;
+	}	
+}
+
+function initLumbers(){
+	var xStartPos, laneSpeed;
+	for(var i = 1; i < 8; i++){
+		laneSpeed = getRandomArbitrary(0.07, 0.1);
+		xStartPos = getRandomNumber(-7, -2);
+		lumbers.push( new Lumber(i, xStartPos, laneSpeed) );
+		xStartPos = getRandomNumber(3, 7);
+		lumbers.push( new Lumber(i, xStartPos, laneSpeed) );
+	}
+	
+}
+
 function drawGround( mv ){
 	
 	//Teiknar vinningsjörðina
@@ -209,101 +224,28 @@ function drawGround( mv ){
     gl.drawArrays( gl.TRIANGLES, numCubeVertices+24, 6 );
 	
 }
-// 
-function drawCube( mv ) {
-
-    // set color to blue
-    gl.uniform4fv( colorLoc, BLUE );
-    
-    gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
-    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
-
-    var mv1 = mv;
-    
-	mv = mult( mv, translate(frogXPos, frogYPos, 0.5) );
-    gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
-    gl.drawArrays( gl.TRIANGLES, 0, numCubeVertices );
-
- 
-}
- //Gætum sett þessi föll í annan klasa eða í klasa fyrir froskinn?
-function checkCarCollision(){
-	 //Bíllinn er 3x1 ferningur xLow = Xpos-1.50 ,  xHigh = Xpos+1.5 því xPos er miðjan
-	 //Við erum 1x1 ferningur xLow = frogXPos-0.5, xHigh = frogXPos+0.5 því xPos er miðjan. 
-	 for(var i=0; i < cars.length; i++){
-		 //Fer í gegnum alla bílana
-		 if( frogXPos-0.5 > cars[i].xPos-1.5 && frogXPos+0.5 < cars[i].xPos+1.5 && frogYPos == cars[i].yPos){
-			 //Rekst á bíl, drepa frosk?
-			 console.log("Car Collision"); 
-			 return true;
-		 } 
-	 }  
-	 return false;
- }
- function checkLumberCollision(){
-	 //Bíllinn er 3x1 ferningur xLow = Xpos-1.50 ,  xHigh = Xpos+1.5 því xPos er miðjan
-	 //Við erum 1x1 ferningur xLow = frogXPos-0.5, xHigh = frogXPos+0.5 því xPos er miðjan. 
-	 for(var i=0; i < lumbers.length; i++){
-		 //Fer í gegnum alla bílana
-		 if( (frogXPos-0.5 > lumbers[i].xPos-1.5 && frogXPos+0.5 < lumbers[i].xPos+1.5) && frogYPos == lumbers[i].yPos){
-			 //Rekst á bíl, drepa frosk?
-			 console.log("Lumber Collision"); 
-			 //Skilar tréinu sem froskurinn er á.
-			 return lumbers[i];
-		 } 
-	 }  
-	 return null;
- }
- function updateMovement(){
-	 if(checkCarCollision()){
-		 //Froskur dauður.
-		 respawnFrog();
-	 }
-	 if(frogYPos > 0.5){
-		 //Athuga bara lumber collision ef við erum á eða við vatnið.
-		 //Það er til að við séum ekki að athuga lumber collision þegar
-		 //við erum kannski á byrjunarstaðnum eða á götunni.
-		 //þetta 0.5 gildi er byrjunin á ánni.
-		var lumber = checkLumberCollision();
-		if(lumber != null){
-			//Froskurinn er á tré og tréið sem hann er á er
-			//isOnLumber hluturinn.
-			frogXPos += lumber.speed;	 
-		}
-		else{
-			//Við erum á vatninu og ekki á lumber sem þýðir dauður froskur.
-			respawnFrog();
-		}
-	 }
-
-	 
- }
- function respawnFrog(){
-	 frogXPos = 0;
-	 frogYPos = -10;	 
- }
- 
-
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
-	updateMovement();
+
     var mv = mat4();
-	mv = lookAt( vec3(-25.0+frogYPos, -frogXPos, 12), vec3(frogYPos, -frogXPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
+	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
 	mv = mult(mv, rotateY( spinX ));
 	mv = mult(mv, rotateX( spinY ));
 	//Þetta rotate lagar að X ásinn virtist vera eins og Y ásinn, gætum kannski
 	//lagað það og sleppt þessu en þetta virkar.
 	mv = mult( mv, rotateZ( 90 ) );
 	
-	drawCube( mv );
 	for(var i = 0; i<cars.length; i++){
 		cars[i].draw(mv, gl);
 	}
 	for(var i = 0; i<lumbers.length; i++){
 		lumbers[i].draw(mv, gl);
 	}
+	
+	frog.updateMovement(cars, lumbers);
+	frog.draw(mv, gl);
 	
 	drawGround( mv );
 	//mv = mult( mv, rotateZ( -carDirection ) );
