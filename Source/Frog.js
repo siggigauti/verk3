@@ -109,7 +109,7 @@ Frog.prototype.checkLumberCollision = function( lumbers ){
 
 Frog.prototype.draw = function( mv, gl ){
 	
-
+		
     // set color to blue
 	gl.uniform4fv( colorLoc, this.color );
     

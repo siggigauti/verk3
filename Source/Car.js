@@ -36,6 +36,7 @@ Car.prototype.updateMovement = function(){
 
 Car.prototype.draw = function( mv, gl ){
 	
+  
 	this.updateMovement();
 	
 	gl.uniform4fv( colorLoc, this.color );

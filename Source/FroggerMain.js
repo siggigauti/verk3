@@ -15,14 +15,14 @@ var origX;
 var origY;
 var numCubeVertices  = 36;
 var htmlPoints, htmlLives, htmlTime;
-//Textures sem við notum:
-var water = document.getElementById("waterImage");
-var grass = document.getElementById("grassImage");
-var concrete = document.getElementById("concreteImage");
+
+
 
 var height = 0.0;
 var turn = 0.0;
 
+var program1;
+var program2;
 
 var frog;
 var points;
@@ -31,6 +31,7 @@ var cars = [];
 var lumbers = [];
 var numCarsPerLane = 2;
 
+var locTexCoord;
 var colorLoc;
 var mvLoc1;
 var pLoc1;
@@ -39,6 +40,7 @@ var mvLoc2;
 var pLoc2;
 
 var cubeBuffer;
+var earthBuffer;
 var trackBuffer;
 var vPosition1;
 var vPosition2;
@@ -63,29 +65,33 @@ var cVertices = [
     vec3(  0.5,  0.5, -0.5 ), vec3(  0.5, -0.5, -0.5 ), vec3( -0.5, -0.5, -0.5 ),
     // left side:
     vec3( -0.5,  0.5, -0.5 ), vec3( -0.5, -0.5, -0.5 ), vec3( -0.5, -0.5,  0.5 ),
-    vec3( -0.5, -0.5,  0.5 ), vec3( -0.5,  0.5,  0.5 ), vec3( -0.5,  0.5, -0.5 ),
+    vec3( -0.5, -0.5,  0.5 ), vec3( -0.5,  0.5,  0.5 ), vec3( -0.5,  0.5, -0.5 )
 	
 	//Jörðin byrjar í 36
 	
-	//Vinningssvæðið er 2x10 ferningur
-	vec3(10.5, 10.5, 0), vec3(-10.5, 10.5, 0), vec3(-10.5, 7.5, 0),
-	vec3(10.5, 10.5, 0), vec3(10.5, 7.5, 0), vec3(-10.5, 7.5, 0),
 	
-	//Áin er 7x10 ferningur
-	vec3(10.5, 7.5, 0), vec3(-10.5, 7.5, 0), vec3(-10.5, 0.5, 0),
-	vec3(10.5, 7.5, 0), vec3(10.5, 0.5, 0), vec3(-10.5, 0.5, 0),
-	
-	//Miðjusvæði er 2x10 ferningur
-	vec3(10.5, 0.5, 0), vec3(-10.5, 0.5, 0), vec3(-10.5, -1.5, 0),
-	vec3(10.5, 0.5, 0), vec3(10.5, -1.5, 0), vec3(-10.5, -1.5, 0),
-	
-	//Gatan er 7x10 ferningur
-	vec3(10.5, -1.5, 0), vec3(-10.5,  -1.5, 0), vec3(-10.5, -7.5, 0),
-	vec3(10.5, -1.5, 0), vec3(10.5, -7.5, 0), vec3(-10.5, -7.5, 0),
-	
-	//Byrjunarsvæðið er 2x10 ferningur
-	vec3(10.5, -7.5, 0), vec3(-10.5, -7.5, 0), vec3(-10.5, -10.5, 0),
-	vec3(10.5, -7.5, 0), vec3(10.5, -10.5, 0), vec3(-10.5, -10.5, 0),
+];
+
+var earthCoords = [
+  //Vinningssvæðið er 2x10 ferningur
+  vec3(10.5, 10.5, 0), vec3(-10.5, 10.5, 0), vec3(-10.5, 7.5, 0),
+  vec3(10.5, 10.5, 0), vec3(10.5, 7.5, 0), vec3(-10.5, 7.5, 0),
+  
+  //Áin er 7x10 ferningur
+  vec3(10.5, 7.5, 0), vec3(-10.5, 7.5, 0), vec3(-10.5, 0.5, 0),
+  vec3(10.5, 7.5, 0), vec3(10.5, 0.5, 0), vec3(-10.5, 0.5, 0),
+  
+  //Miðjusvæði er 2x10 ferningur
+  vec3(10.5, 0.5, 0), vec3(-10.5, 0.5, 0), vec3(-10.5, -1.5, 0),
+  vec3(10.5, 0.5, 0), vec3(10.5, -1.5, 0), vec3(-10.5, -1.5, 0),
+  
+  //Gatan er 7x10 ferningur
+  vec3(10.5, -1.5, 0), vec3(-10.5,  -1.5, 0), vec3(-10.5, -7.5, 0),
+  vec3(10.5, -1.5, 0), vec3(10.5, -7.5, 0), vec3(-10.5, -7.5, 0),
+  
+  //Byrjunarsvæðið er 2x10 ferningur
+  vec3(10.5, -7.5, 0), vec3(-10.5, -7.5, 0), vec3(-10.5, -10.5, 0),
+  vec3(10.5, -7.5, 0), vec3(10.5, -10.5, 0), vec3(-10.5, -10.5, 0),
 ];
 
 // Mynsturhnit fyrir spjaldið
@@ -128,7 +134,7 @@ window.onload = function init()
 
     //<------Uniform color program og location binders----------->
     // Litarar sem lite með einum lit (uniform)
-    var program1 = initShaders( gl, "vertex-shader", "fragment-shader" );
+    program1 = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program1 ); //Hvaða program á að nota?
 
     //Buffer fyrir öll hnitin.
@@ -152,7 +158,12 @@ window.onload = function init()
 
     //<------Texture program og location binders----------->
     // Litarar sem lita með mynstri (texture)
-    var program2 = initShaders( gl, "vertex-shader2", "fragment-shader2" );
+    program2 = initShaders( gl, "vertex-shader2", "fragment-shader2" );
+
+    earthBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(earthCoords), gl.STATIC_DRAW );
+
     //Muna að skipta myndunum með configureTexture( image, program2 ); 
     //Þar sem image er var image = document.getElementById("id á image")
     vPosition2 = gl.getAttribLocation( program2, "vPosition" );
@@ -162,7 +173,7 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoords), gl.STATIC_DRAW );
 
-    var locTexCoord = gl.getAttribLocation( program2, "vTexCoord" );
+    locTexCoord = gl.getAttribLocation( program2, "vTexCoord" );
     gl.vertexAttribPointer( locTexCoord, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( locTexCoord );
 
@@ -262,41 +273,51 @@ function initLumbers(){
 function drawGround( mv ){
 	
 	//Teiknar vinningsjörðina
-	gl.uniform4fv( colorLoc, RED );
-	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
-    gl.drawArrays( gl.TRIANGLES, numCubeVertices, 6 );
+	//gl.uniform4fv( colorLoc, RED );
+  var image = document.getElementById("texImage");
+  //Textures sem við notum:
+  var water = document.getElementById("waterImage");
+  var grass = document.getElementById("grassImage");
+  var concrete = document.getElementById("concreteImage");
+  configureTexture(grass, program2);
+	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
+  gl.drawArrays( gl.TRIANGLES, 0, 6 );
 	
 	
 	//Teiknar vatnið
-	gl.uniform4fv( colorLoc, WATERBLUE );
-	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
-    gl.drawArrays( gl.TRIANGLES, numCubeVertices+6, 6 );
+	//gl.uniform4fv( colorLoc, WATERBLUE );
+  configureTexture(water, program2);
+	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
+  gl.drawArrays( gl.TRIANGLES, 6, 6 );
 	
 	
 	//Millistig
-	gl.uniform4fv( colorLoc, GREEN );
-	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
-    gl.drawArrays( gl.TRIANGLES, numCubeVertices+12, 6 );
-	
+	//gl.uniform4fv( colorLoc, GREEN );
+  configureTexture(grass, program2);
+	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
+  gl.drawArrays( gl.TRIANGLES, 12, 6 );
+
 	//Teiknar götuna
-	gl.uniform4fv( colorLoc, BLACK );
-	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
-    gl.drawArrays( gl.TRIANGLES, numCubeVertices+18, 6 );
+	//gl.uniform4fv( colorLoc, BLACK );
+  configureTexture(concrete, program2);
+	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
+  gl.drawArrays( gl.TRIANGLES, 18, 6 );
 	
 	//Byrjunarjörðin
-	gl.uniform4fv( colorLoc, RED );
-	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
-    gl.drawArrays( gl.TRIANGLES, numCubeVertices+24, 6 );
+	//gl.uniform4fv( colorLoc, RED );
+  configureTexture(grass, program2);
+	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
+  gl.drawArrays( gl.TRIANGLES, 24, 6 );
 	
 }
 function render()
 {
 	updateHtmlText();
 	
-    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
 
-    var mv = mat4();
+  var mv = mat4();
 	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
 	mv = mult(mv, rotateY( spinX ));
 	mv = mult(mv, rotateX( spinY ));
@@ -304,6 +325,9 @@ function render()
 	//lagað það og sleppt þessu en þetta virkar.
 	mv = mult( mv, rotateZ( 90 ) );
 	
+  gl.useProgram(program1);
+  gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
+  gl.vertexAttribPointer( pLoc1, 3, gl.FLOAT, false, 0, 0 );
 	for(var i = 0; i<cars.length; i++){
 		cars[i].draw(mv, gl);
 	}
@@ -313,7 +337,10 @@ function render()
 	
 	frog.updateMovement(cars, lumbers);
 	frog.draw(mv, gl);
-	
+
+	gl.useProgram(program2);
+  gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
+  gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
 	drawGround( mv );
 	//mv = mult( mv, rotateZ( -carDirection ) );
 	//mv = mult( mv, translate(carXPos, carYPos, 0.0) );
