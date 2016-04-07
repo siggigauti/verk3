@@ -100,7 +100,40 @@ var earthCoords = [
 
 // Mynsturhnit fyrir spjaldið
 var texCoords = [
+	//Vinningssvæði
     vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
+    vec2( 0.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
+    vec2( 0.0, 0.0 ),
+	
+	//Vatn
+	vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
+    vec2( 0.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
+    vec2( 0.0, 0.0 ),
+	
+	//Miðjan
+	vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
+    vec2( 0.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
+    vec2( 0.0, 0.0 ),
+	
+	//Gatan
+	vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
+    vec2( 0.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
+    vec2( 0.0, 0.0 ),
+	
+	//Byrjunarsvæði
+	vec2( 20.0, 4.0 ),
     vec2( 0.0, 4.0 ),
     vec2( 0.0, 0.0 ),
     vec2( 20.0, 4.0 ),
@@ -278,40 +311,40 @@ function drawGround( mv ){
 	
 	//Teiknar vinningsjörðina
 	//gl.uniform4fv( colorLoc, RED );
-  var image = document.getElementById("texImage");
-  //Textures sem við notum:
-  var water = document.getElementById("waterImage");
-  var grass = document.getElementById("grassImage");
-  var concrete = document.getElementById("concreteImage");
-  configureTexture(grass, program2);
+	var image = document.getElementById("texImage");
+	//Textures sem við notum:
+	var water = document.getElementById("waterImage");
+	var grass = document.getElementById("grassImage");
+	var concrete = document.getElementById("concreteImage");
+	configureTexture(grass, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
-  gl.drawArrays( gl.TRIANGLES, 0, 6 );
+	gl.drawArrays( gl.TRIANGLES, 0, 6 );
 	
 	
 	//Teiknar vatnið
 	//gl.uniform4fv( colorLoc, WATERBLUE );
-  configureTexture(water, program2);
+	configureTexture(water, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
-  gl.drawArrays( gl.TRIANGLES, 6, 6 );
+	gl.drawArrays( gl.TRIANGLES, 6, 6 );
 	
 	
 	//Millistig
 	//gl.uniform4fv( colorLoc, GREEN );
-  configureTexture(grass, program2);
+	configureTexture(grass, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
-  gl.drawArrays( gl.TRIANGLES, 12, 6 );
+	gl.drawArrays( gl.TRIANGLES, 12, 6 );
 
 	//Teiknar götuna
 	//gl.uniform4fv( colorLoc, BLACK );
-  configureTexture(concrete, program2);
+	configureTexture(concrete, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
-  gl.drawArrays( gl.TRIANGLES, 18, 6 );
+	gl.drawArrays( gl.TRIANGLES, 18, 6 );
 	
 	//Byrjunarjörðin
 	//gl.uniform4fv( colorLoc, RED );
-  configureTexture(grass, program2);
+	configureTexture(grass, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
-  gl.drawArrays( gl.TRIANGLES, 24, 6 );
+	gl.drawArrays( gl.TRIANGLES, 24, 6 );
 	
 }
 function render()
