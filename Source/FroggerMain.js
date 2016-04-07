@@ -15,7 +15,10 @@ var origX;
 var origY;
 var numCubeVertices  = 36;
 
-
+//Textures sem við notum:
+var water = document.getElementById("waterImage");
+var grass = document.getElementById("grassImage");
+var concrete = document.getElementById("concreteImage");
 
 var height = 0.0;
 var turn = 0.0;
@@ -27,13 +30,16 @@ var lumbers = [];
 var numCarsPerLane = 2;
 
 var colorLoc;
-var mvLoc;
-var pLoc;
+var mvLoc1;
+var pLoc1;
 var proj;
+var mvLoc2;
+var pLoc2;
 
 var cubeBuffer;
 var trackBuffer;
-var vPosition;
+var vPosition1;
+var vPosition2;
 
 
 // the 36 vertices of the cube
@@ -80,6 +86,16 @@ var cVertices = [
 	vec3(10.5, -7.5, 0), vec3(10.5, -10.5, 0), vec3(-10.5, -10.5, 0),
 ];
 
+// Mynsturhnit fyrir spjaldið
+var texCoords = [
+    vec2( 0.0, 0.0 ),
+    vec2( 1.0, 0.0 ),
+    vec2( 1.0, 1.0 ),
+    vec2( 1.0, 1.0 ),
+    vec2( 0.0, 1.0 ),
+    vec2( 0.0, 0.0 )
+];
+
 // vertices of the track
 var tVertices = [];
 
@@ -105,26 +121,63 @@ window.onload = function init()
     
     gl.enable(gl.DEPTH_TEST);
 
-    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
-    gl.useProgram( program );
 
+    //<------Uniform color program og location binders----------->
+    // Litarar sem lite með einum lit (uniform)
+    var program1 = initShaders( gl, "vertex-shader", "fragment-shader" );
+    gl.useProgram( program1 ); //Hvaða program á að nota?
+
+    //Buffer fyrir öll hnitin.
     cubeBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(cVertices), gl.STATIC_DRAW );
 
-    vPosition = gl.getAttribLocation( program, "vPosition" );
-    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vPosition );
+    //vPosition fyrir program1
+    vPosition1 = gl.getAttribLocation( program1, "vPosition" );
+    gl.vertexAttribPointer( vPosition1, 3, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition1 );
 
-    colorLoc = gl.getUniformLocation( program, "fColor" );
+    colorLoc = gl.getUniformLocation( program1, "fColor" );
+
+    //ModelViewLoc fyrir program1
+    mvLoc1 = gl.getUniformLocation( program1, "modelview" );
+    //ProjectionLoc fyrir program1
+    pLoc1 = gl.getUniformLocation( program1, "projection" );
+
+    //SKOÐA DRAW FÖLLIN, PASSA AÐ RÉTT vPosition sé notað (1 eða 2) SAMA MEÐ mvLoc
+
+    //<------Texture program og location binders----------->
+    // Litarar sem lita með mynstri (texture)
+    var program2 = initShaders( gl, "vertex-shader2", "fragment-shader2" );
+    //Muna að skipta myndunum með configureTexture( image, program2 ); 
+    //Þar sem image er var image = document.getElementById("id á image")
+    vPosition2 = gl.getAttribLocation( program2, "vPosition" );
+    gl.enableVertexAttribArray( vPosition2 );
     
-    mvLoc = gl.getUniformLocation( program, "modelview" );
+    var tBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoords), gl.STATIC_DRAW );
 
-    // set projection
-    pLoc = gl.getUniformLocation( program, "projection" );
+    var locTexCoord = gl.getAttribLocation( program2, "vTexCoord" );
+    gl.vertexAttribPointer( locTexCoord, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( locTexCoord );
+
+    mvLoc2 = gl.getUniformLocation( program2, "modelview" );
+    //ProjectionLoc fyrir program2
+    pLoc2 = gl.getUniformLocation( program2, "projection" );
+
+    gl.enable( gl.MULTISAMPLE );
+
+    //<----Setjum projection á progrömin---->
     proj = perspective( 50.0, 1.0, 1.0, 500.0 );
-    gl.uniformMatrix4fv(pLoc, false, flatten(proj));
+    gl.useProgram(program1);
+    gl.uniformMatrix4fv(pLoc1, false, flatten(proj));
+    
+    gl.useProgram(program2);
+    gl.uniformMatrix4fv(pLoc2, false, flatten(proj));
 
+    //Textures ekki implementað strax, notum program1
+    gl.useProgram(program1);
             
 	canvas.addEventListener("mousedown", function(e){
 	movement = true;
@@ -198,29 +251,29 @@ function drawGround( mv ){
 	
 	//Teiknar vinningsjörðina
 	gl.uniform4fv( colorLoc, RED );
-	gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, numCubeVertices, 6 );
 	
 	
 	//Teiknar vatnið
 	gl.uniform4fv( colorLoc, WATERBLUE );
-	gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, numCubeVertices+6, 6 );
 	
 	
 	//Millistig
 	gl.uniform4fv( colorLoc, GREEN );
-	gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, numCubeVertices+12, 6 );
 	
 	//Teiknar götuna
 	gl.uniform4fv( colorLoc, BLACK );
-	gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, numCubeVertices+18, 6 );
 	
 	//Byrjunarjörðin
 	gl.uniform4fv( colorLoc, RED );
-	gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+	gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, numCubeVertices+24, 6 );
 	
 }
@@ -257,6 +310,20 @@ function render()
 }
     
     
-  
+
+function configureTexture( image, prog ) {
+    texture = gl.createTexture();
+    gl.bindTexture( gl.TEXTURE_2D, texture );
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
+    gl.generateMipmap( gl.TEXTURE_2D );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+    
+    gl.useProgram(prog);
+    gl.uniform1i(gl.getUniformLocation(prog, "texture"), 0);
+}  
 
 

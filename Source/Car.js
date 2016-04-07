@@ -41,7 +41,7 @@ Car.prototype.draw = function( mv, gl ){
 	gl.uniform4fv( colorLoc, this.color );
     
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
-    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer( vPosition1, 3, gl.FLOAT, false, 0, 0 );
 
 	mv = mult(mv, translate(this.xPos, this.yPos, 0.0));
 
@@ -50,13 +50,13 @@ Car.prototype.draw = function( mv, gl ){
     mv = mult( mv, scalem( 3.0, 1.0, 0.8 ) );
     mv = mult( mv, translate( 0.0, 0.0, 0.5 ) );
 
-    gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+    gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, 0, numCubeVertices );
 
     // upper part of the car
     mv1 = mult( mv1, scalem( 1.0, 0.5, 1 ) );
     mv1 = mult( mv1, translate( -0.2, 0.0, 1 ) );
 	gl.uniform4fv( colorLoc, this.roofColor );
-    gl.uniformMatrix4fv(mvLoc, false, flatten(mv1));
+    gl.uniformMatrix4fv(mvLoc1, false, flatten(mv1));
     gl.drawArrays( gl.TRIANGLES, 0, numCubeVertices );	
 }

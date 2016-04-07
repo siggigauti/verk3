@@ -26,6 +26,38 @@ main()
 }
 </script>
 
+<script id="vertex-shader2" type="x-shader/x-vertex">
+// Vertex shader for textured object
+
+attribute  vec4 vPosition;
+attribute  vec2 vTexCoord;
+
+varying vec2 fTexCoord;
+
+uniform mat4 projection;
+uniform mat4 modelview;
+
+void main()
+{
+    fTexCoord = vTexCoord;
+    gl_Position = projection * modelview * vPosition;
+}
+</script>
+
+<script id="fragment-shader2" type="x-shader/x-fragment">
+// Vertex shader for textured object
+
+precision mediump float;
+
+varying vec2 fTexCoord;
+uniform sampler2D texture;
+
+void main()
+{
+    gl_FragColor = texture2D( texture, fTexCoord );
+}
+</script>
+
 <script type="text/javascript" src="Common\webgl-utils.js"></script>
 <script type="text/javascript" src="Common\initShaders.js"></script>
 <script type="text/javascript" src="Common\MV.js"></script>
@@ -33,6 +65,9 @@ main()
 <script type="text/javascript" src="Car.js"></script>
 <script type="text/javascript" src="Lumber.js"></script>
 <script type="text/javascript" src="Frog.js"></script>
+<img id="waterImage" src="Common\water.jpg" alt="Water image" hidden></img>
+<img id="grassImage" src="Common\grass.jpg" alt="Grass image" hidden></img>
+<img id="concreteImage" src="Common\concrete.jpg" alt="Concrete image" hidden></img>
 <body>
 <canvas id="gl-canvas" width="1000" height="1000">
 Oops ... your browser doesn't support the HTML5 canvas element

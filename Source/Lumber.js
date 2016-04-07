@@ -41,12 +41,12 @@ Lumber.prototype.draw = function( mv, gl ){
 	gl.uniform4fv( colorLoc, this.Color );
     
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
-    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer( vPosition1, 3, gl.FLOAT, false, 0, 0 );
 
 	mv = mult(mv, translate(this.xPos, this.yPos, 0.0));
 
     mv = mult( mv, scalem( this.lumberLength, 1, 0.05 ) );
-    gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+    gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, 0, numCubeVertices );
 
 }
