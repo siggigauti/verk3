@@ -14,7 +14,7 @@ var spinY = 0;
 var origX;
 var origY;
 var numCubeVertices  = 36;
-
+var htmlPoints, htmlLives, htmlTime;
 //Textures sem við notum:
 var water = document.getElementById("waterImage");
 var grass = document.getElementById("grassImage");
@@ -25,6 +25,8 @@ var turn = 0.0;
 
 
 var frog;
+var points;
+var roundStartTimer, roundEndTimer;
 var cars = [];
 var lumbers = [];
 var numCarsPerLane = 2;
@@ -109,11 +111,13 @@ window.onload = function init()
     
     gl = WebGLUtils.setupWebGL( canvas );
 	
-		initCars()
-		initLumbers();
-		
-		frog = new Frog();
-		
+	initCars();
+	initLumbers();	
+	frog = new Frog();
+	htmlLives = document.getElementById( "livesLeft" );
+	htmlPoints = document.getElementById( "points" );
+	htmlTimeLeft = document.getElementById( "timeLeft" );
+	
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
@@ -215,8 +219,16 @@ window.onload = function init()
 				break;
 		}
 	} );
-    render();
+	
+	
+	window.setInterval(render, 17);
 }
+function updateHtmlText(){
+	htmlPoints.innerHTML = Math.round(frog.points)+" Points";
+	htmlLives.innerHTML = frog.lives+" Lives left";
+	htmlTimeLeft.innerHTML = Math.round(60-frog.timeAlive) + " Seconds remaining";
+}
+
 function getRandomNumber(high, low){
 	return Math.random() * (high - low) + low;	
 }
@@ -279,6 +291,8 @@ function drawGround( mv ){
 }
 function render()
 {
+	updateHtmlText();
+	
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
 
@@ -306,7 +320,7 @@ function render()
 
 	//carXPos += 0.01;
 	//carYPos += 0.01;
-	requestAnimFrame( render );
+	
 }
     
     

@@ -4,8 +4,13 @@ function getRandomArbitrary(min, max) {
 }
 function Frog( lane){	
 	this.respawn();
+	this.points = 0;
+	this.lives = 3;
+	this.timeAlive;
+	
 }
 Frog.prototype.respawn = function(){
+	this.timeOfBirth = Date.now();
 	this.xPos = 0;
 	this.yPos = -10;
 	this.color = new vec4(0,0,1,1);
@@ -20,6 +25,19 @@ Frog.prototype.moveX = function(x){
 
 
 Frog.prototype.updateMovement = function(cars, lumbers){
+	this.timeAlive = (Date.now() - this.timeOfBirth) / 1000;
+	
+	
+	if(this.lives == 0){
+		//Froskurinn hefur dáið þrisvar sinnum,  stig endursetjast.
+		this.points = 0;
+		this.lives = 3;
+	}
+	if(this.timeAlive > 60){
+		//Spilari er búinn að vera í 60min að leysa brautina,  þá tapar hann lífi
+		this.lives--;
+		this.respawn();	
+	}
 	
 	//Passa að froskur sé inná leiksvæðinu
 	if(this.xPos > 10) this.xPos = 10;
@@ -30,6 +48,7 @@ Frog.prototype.updateMovement = function(cars, lumbers){
 	//Athuga árekstra
 	if(this.checkCarCollision( cars )){
 		 //Froskur dauður.
+		 this.lives--;
 		 this.respawn();
 	 }
 	if(this.yPos > 0.5 && this.yPos < 7.5){
@@ -44,7 +63,8 @@ Frog.prototype.updateMovement = function(cars, lumbers){
 			this.xPos += lumber.speed;	 
 		}
 		else{
-			//Við erum á vatninu og ekki á lumber sem þýðir dauður froskur.
+			//Við erum á vatninu og ekki á lumber sem þýðir dauður froskur.		
+			this.lives--;
 			this.respawn();
 		}
 	}
@@ -52,6 +72,7 @@ Frog.prototype.updateMovement = function(cars, lumbers){
 	if(this.yPos > 7.5){
 		//Froskurinn er kominn á vinningssvæðið!
 		console.log("Sigur!");
+		this.points += (60-this.timeAlive) * 5;
 		this.respawn();
 	}
 	
@@ -65,7 +86,7 @@ Frog.prototype.checkCarCollision = function ( cars ){
 		 //Fer í gegnum alla bílana
 		 if( this.xPos+0.5 > cars[i].xPos-1.5 && this.xPos-0.5 < cars[i].xPos+1.5 && this.yPos == cars[i].yPos){
 			 //Rekst á bíl, drepa frosk?
-			 console.log("Þetta skeður þegar þú vinnur Leó Blær"); 
+			 console.log("Car collision"); 
 			 return true;
 		 } 
 	 }  
@@ -93,11 +114,11 @@ Frog.prototype.draw = function( mv, gl ){
 	gl.uniform4fv( colorLoc, this.color );
     
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
-    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer( vPosition1, 3, gl.FLOAT, false, 0, 0 );
 	
     
 	mv = mult( mv, translate(this.xPos, this.yPos, 0.5) );//bæta inn size
 	mv = mult( mv, scalem(1, 1, 1) );
-    gl.uniformMatrix4fv(mvLoc, false, flatten(mv));
+    gl.uniformMatrix4fv(mvLoc1, false, flatten(mv));
     gl.drawArrays( gl.TRIANGLES, 0, numCubeVertices );
 }
