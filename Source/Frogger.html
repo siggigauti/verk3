@@ -41,7 +41,7 @@ precision mediump float;
 uniform vec4 fColor;
 varying vec3 pos;
 
-
+uniform float offset;
 uniform vec4 ambientProduct;
 uniform vec4 diffuseProduct;
 uniform vec4 specularProduct;
@@ -69,7 +69,7 @@ void main()
 
     gl_FragColor = fColor;
 
-    if(pos.x < -10.5 || pos.x > 10.5)
+    if(pos.x < -10.5-offset || pos.x > 10.5-offset)
       discard;
     else
       gl_FragColor = fColor;

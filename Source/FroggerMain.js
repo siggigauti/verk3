@@ -33,6 +33,7 @@ var numCarsPerLane = 2;
 var numCarVertices,numCowVertices,numSharkVertices,numAppleVertices;
 var numCarNormals,numCowNormals,numSharkNormals,numAppleNormals;
 
+var offsetLoc;
 var locTexCoord;
 var colorLoc;
 var mvLoc1;
@@ -294,7 +295,7 @@ window.onload = function init()
     modelViewMatrixLoc = gl.getUniformLocation( program1, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program1, "projectionMatrix" );
     normalMatrixLoc = gl.getUniformLocation( program1, "normalMatrix" );
-
+	offsetLoc = gl.getUniformLocation(program1, "offset");
     //SKOÐA DRAW FÖLLIN, PASSA AÐ RÉTT vPosition sé notað (1 eða 2) SAMA MEÐ mvLoc
 
     //<------Texture program og location binders----------->
@@ -314,9 +315,9 @@ window.onload = function init()
       gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
       gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoords), gl.STATIC_DRAW );
 
-    locTexCoord = gl.getAttribLocation( program2, "vTexCoord" );
-    gl.vertexAttribPointer( locTexCoord, 2, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( locTexCoord );
+    //locTexCoord = gl.getAttribLocation( program2, "vTexCoord" );
+    //gl.vertexAttribPointer( locTexCoord, 2, gl.FLOAT, false, 0, 0 );
+    //gl.enableVertexAttribArray( locTexCoord );
 
     mvLoc2 = gl.getUniformLocation( program2, "modelview" );
     //ProjectionLoc fyrir program2
@@ -471,17 +472,12 @@ function render()
 {
 	updateHtmlText();
 	
-  gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
+	var mv = lookAt( vec3(-10.0+frog.yPos, -frog.xPos, 14.0), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
 
-
-   
-
-  var mv = mat4();
-	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12.0), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
-
-	mv = mult(mv, rotateY( spinX ));
-	mv = mult(mv, rotateX( spinY ));
+	//mv = mult(mv, rotateY( spinX ));
+	//mv = mult(mv, rotateX( spinY ));
 	//Þetta rotate lagar að X ásinn virtist vera eins og Y ásinn, gætum kannski
 	//lagað það og sleppt þessu en þetta virkar.
 	mv = mult( mv, rotateZ( 90 ) );
@@ -489,8 +485,9 @@ function render()
 
 	
 	gl.useProgram(program1);
-  gl.bindBuffer( gl.ARRAY_BUFFER, carvBuffer );
-  gl.vertexAttribPointer( vPosition1, 4, gl.FLOAT, false, 0, 0 );
+	gl.uniform1f( offsetLoc, frog.xPos );
+	gl.bindBuffer( gl.ARRAY_BUFFER, carvBuffer );
+	gl.vertexAttribPointer( vPosition1, 4, gl.FLOAT, false, 0, 0 );
 	for(var i = 0; i<cars.length; i++){
 		cars[i].draw(mv, gl);
 	}
@@ -503,10 +500,10 @@ function render()
   
 
 	gl.useProgram(program2);
-  gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
-  gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
+	gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
+	gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
 	drawGround( mv );
-  drawSky( mv );
+	drawSky( mv );
 
 	//mv = mult( mv, rotateZ( -carDirection ) );
 	//mv = mult( mv, translate(carXPos, carYPos, 0.0) );
