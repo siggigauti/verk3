@@ -328,7 +328,7 @@ function initCars(){
 function initLumbers(){
 	var xStartPos, laneSpeed;
 	for(var i = 1; i < 8; i++){
-		laneSpeed = getRandomArbitrary(0.07, 0.1);
+		laneSpeed = getRandomArbitrary(0.05, 0.08);
 		xStartPos = getRandomNumber(-7, -2);
 		lumbers.push( new Lumber(i, xStartPos, laneSpeed) );
 		xStartPos = getRandomNumber(3, 7);

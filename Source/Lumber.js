@@ -20,16 +20,16 @@ function Lumber( lane, xPos, speed){
 }
 Lumber.prototype.updateMovement = function(){
 	
-	if(this.xPos < 10 && this.xPos > -10){
+	if(this.xPos < 12.5 && this.xPos > -12.5){
 		this.xPos += this.speed;
 	}
 	else{
 		//this.speed = getRandomArbitrary(0.15, 0.25)*0.5;
 		if(this.xPos > 10){
-			this.xPos = -9.99;
+			this.xPos = -12.49;
 		}
 		else{
-			this.xPos = 9.99;
+			this.xPos = 12.49;
 		}	
 	}
 }

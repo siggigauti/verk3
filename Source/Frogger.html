@@ -7,9 +7,11 @@ attribute  vec4 vPosition;
 
 uniform mat4 projection;
 uniform mat4 modelview;
+varying vec3 pos;
 
 void main() 
 {
+    pos = (modelview * vPosition).xyz;
     gl_Position = projection * modelview * vPosition;
 } 
 </script>
@@ -19,11 +21,15 @@ void main()
 precision mediump float;
    
 uniform vec4 fColor;
+varying vec3 pos;
 
 void
 main()
 {
-    gl_FragColor = fColor;
+    if(pos.x < -10.5 || pos.x > 10.5)
+      discard;
+    else
+      gl_FragColor = fColor;
 }
 </script>
 
