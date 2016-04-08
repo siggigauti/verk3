@@ -7,7 +7,7 @@ var RED = vec4(1.0, 0.0, 0.0, 1.0);
 var GRAY = vec4(0.4, 0.4, 0.4, 1.0);
 var BLACK = vec4(0, 0, 0, 1.0);
 var GREEN = vec4(0, 0.6, 0, 1.0);
-var WATERBLUE = vec4(0, 0, 0.5, 1.0);
+var WATERBLUE = vec4(0.5294117647, 0.80784313725, 0.98, 1.0);
 var movement = false;     // Do we rotate?
 var spinX = 0;
 var spinY = 0;
@@ -41,11 +41,15 @@ var proj;
 var mvLoc2;
 var pLoc2;
 
+<<<<<<< HEAD
 var carvBuffer;
 var carBuffer;
 var carvNormal;
 var vertices = [];
 var normals = [];
+=======
+
+>>>>>>> origin/master
 var cubeBuffer;
 var earthBuffer;
 var trackBuffer;
@@ -118,6 +122,27 @@ var earthCoords = [
   //Byrjunarsvæðið er 2x21 ferningur
   vec4(10.5, -7.5, 0, 1.0), vec4(-10.5, -7.5, 0, 1.0), vec4(-10.5, -10.5, 0, 1.0),
   vec4(10.5, -7.5, 0, 1.0), vec4(10.5, -10.5, 0, 1.0), vec4(-10.5, -10.5, 0, 1.0),
+
+
+  // front side:
+    vec4( -0.5,  0.5,  0.5, 1.0 ), vec4( -0.5, -0.5,  0.5, 1.0 ), vec4(  0.5, -0.5,  0.5, 1.0 ),
+    vec4(  0.5, -0.5,  0.5, 1.0 ), vec4(  0.5,  0.5,  0.5, 1.0 ), vec4( -0.5,  0.5,  0.5, 1.0 ),
+    // right side:
+    vec4(  0.5,  0.5,  0.5, 1.0 ), vec4(  0.5, -0.5,  0.5, 1.0 ), vec4(  0.5, -0.5, -0.5, 1.0 ),
+    vec4(  0.5, -0.5, -0.5, 1.0 ), vec4(  0.5,  0.5, -0.5, 1.0 ), vec4(  0.5,  0.5,  0.5, 1.0 ),
+    // bottom side:
+    vec4(  0.5, -0.5,  0.5, 1.0 ), vec4( -0.5, -0.5,  0.5, 1.0 ), vec4( -0.5, -0.5, -0.5, 1.0 ),
+    vec4( -0.5, -0.5, -0.5, 1.0 ), vec4(  0.5, -0.5, -0.5, 1.0 ), vec4(  0.5, -0.5,  0.5, 1.0 ),
+    // top side:
+    vec4(  0.5,  0.5, -0.5, 1.0 ), vec4( -0.5,  0.5, -0.5, 1.0 ), vec4( -0.5,  0.5,  0.5, 1.0 ),
+    vec4( -0.5,  0.5,  0.5, 1.0 ), vec4(  0.5,  0.5,  0.5, 1.0 ), vec4(  0.5,  0.5, -0.5, 1.0 ),
+    // back side:
+    vec4( -0.5, -0.5, -0.5, 1.0 ), vec4( -0.5,  0.5, -0.5, 1.0 ), vec4(  0.5,  0.5, -0.5, 1.0 ),
+    vec4(  0.5,  0.5, -0.5, 1.0 ), vec4(  0.5, -0.5, -0.5, 1.0 ), vec4( -0.5, -0.5, -0.5, 1.0 ),
+    // left side:
+    vec4( -0.5,  0.5, -0.5, 1.0 ), vec4( -0.5, -0.5, -0.5, 1.0 ), vec4( -0.5, -0.5,  0.5, 1.0 ),
+    vec4( -0.5, -0.5,  0.5, 1.0 ), vec4( -0.5,  0.5,  0.5, 1.0 ), vec4( -0.5,  0.5, -0.5, 1.0 )
+
 ];
 
 // Mynsturhnit fyrir spjaldið
@@ -160,7 +185,15 @@ var texCoords = [
     vec2( 0.0, 0.0 ),
     vec2( 21.0, 2.0 ),
     vec2( 21.0, 0.0 ),
-    vec2( 0.0, 0.0 )
+    vec2( 0.0, 0.0 ),
+
+  //Himinn
+  vec2( 0.0, 35.0 ), vec2( 0.0, 0.0 ), vec2( 35.0, 0.0 ), vec2( 35.0, 0.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 0.0 ), //front
+  vec2( 35.0, 35.0 ), vec2( 35.0, 0.0 ), vec2( 35.0, 0.0 ), vec2( 35.0, 0.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 35.0 ), //right
+  vec2( 35.0, 0.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 0.0 ), vec2( 35.0, 0.0 ), vec2( 35.0, 0.0 ), //bottom
+  vec2( 35.0, 35.0 ), vec2( 0.0, 35.0 ), vec2( 0.0, 35.0 ), vec2( 0.0, 35.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 35.0 ), //up
+  vec2( 0.0, 0.0 ), vec2( 0.0, 35.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 0.0 ), vec2( 0.0, 0.0 ), //back
+  vec2( 0.0, 35.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 35.0 ), vec2( 0.0, 35.0 ), //left
 ];
 
 // vertices of the track
@@ -366,7 +399,7 @@ function initCars(){
 function initLumbers(){
 	var xStartPos, laneSpeed;
 	for(var i = 1; i < 8; i++){
-		laneSpeed = getRandomArbitrary(0.07, 0.1);
+		laneSpeed = getRandomArbitrary(0.05, 0.08);
 		xStartPos = getRandomNumber(-7, -2);
 		lumbers.push( new Lumber(i, xStartPos, laneSpeed) );
 		xStartPos = getRandomNumber(3, 7);
@@ -415,6 +448,17 @@ function drawGround( mv ){
 	gl.drawArrays( gl.TRIANGLES, 24, 6 );
 	
 }
+
+function drawSky( mv ){
+  //gl.uniform4fv( colorLoc, WATERBLUE );
+  mv = mult(mv, scalem(80.0, 80.0, 80.0) );
+  //texture
+  var water1 = document.getElementById("waterImage");
+  configureTexture(water1, program2);
+  gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
+  gl.drawArrays( gl.TRIANGLES, 30, numCubeVertices );  
+}
+
 function render()
 {
 	updateHtmlText();
@@ -422,8 +466,13 @@ function render()
   gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
 
+<<<<<<< HEAD
    // var mv = mat4();
 	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
+=======
+  var mv = mat4();
+	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12.0), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
+>>>>>>> origin/master
 	mv = mult(mv, rotateY( spinX ));
 	mv = mult(mv, rotateX( spinY ));
 	//Þetta rotate lagar að X ásinn virtist vera eins og Y ásinn, gætum kannski
@@ -442,11 +491,20 @@ function render()
 	apple.draw(mv, gl);
 	frog.updateMovement(cars, lumbers, apple);
 	frog.draw(mv, gl);
+  
 
+<<<<<<< HEAD
 		gl.useProgram(program2);
 		gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
 		gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
 		drawGround( mv );
+=======
+	gl.useProgram(program2);
+  gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
+  gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
+	drawGround( mv );
+  drawSky( mv );
+>>>>>>> origin/master
 	//mv = mult( mv, rotateZ( -carDirection ) );
 	//mv = mult( mv, translate(carXPos, carYPos, 0.0) );
 
