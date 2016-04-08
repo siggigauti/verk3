@@ -14,7 +14,11 @@ function Car( lane, xPos, speed){
 	
 	if(lane % 2 == 0){
 		this.speed *= -1;
+		this.movingLeft = true;
 	}
+	
+	
+	
 	
 }
 Car.prototype.updateMovement = function(){
@@ -39,7 +43,7 @@ Car.prototype.draw = function( mv, gl ){
   
 	this.updateMovement();
 	
-	gl.uniform4fv( colorLoc, this.color );
+	/*gl.uniform4fv( colorLoc, this.color );
     
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
     gl.vertexAttribPointer( vPosition1, 3, gl.FLOAT, false, 0, 0 );
@@ -60,4 +64,29 @@ Car.prototype.draw = function( mv, gl ){
 	gl.uniform4fv( colorLoc, this.roofColor );
     gl.uniformMatrix4fv(mvLoc1, false, flatten(mv1));
     gl.drawArrays( gl.TRIANGLES, 0, numCubeVertices );	
+	*/
+	
+	var materialDiffuse = vec4( this.color, 1.0 );
+	diffuseProduct = mult(lightDiffuse, materialDiffuse);
+	gl.uniform4fv( gl.getUniformLocation(program1, "diffuseProduct"), flatten(diffuseProduct) );
+    //gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
+    //gl.vertexAttribPointer( pLoc1, 3, gl.FLOAT, false, 0, 0 );
+	gl.bindBuffer( gl.ARRAY_BUFFER, carvBuffer );
+	gl.vertexAttribPointer( vPosition1, 4, gl.FLOAT, false, 0, 0 );
+    //gl.enableVertexAttribArray( vPosition1 );
+	mv = mult(mv, translate(this.xPos, this.yPos, 0.4));
+	mv = mult(mv, rotateX(-90));
+	
+	if(this.movingLeft) mv = mult(mv, rotateY(180));	
+	
+	mv = mult(mv, scalem(0.4, 0.4, 0.4));
+	normalMatrix = [
+        vec3(mv[0][0], mv[0][1], mv[0][2]),
+        vec3(mv[1][0], mv[1][1], mv[1][2]),
+        vec3(mv[2][0], mv[2][1], mv[2][2])
+    ];
+      gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(mv) );
+      gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
+      gl.drawArrays( gl.TRIANGLES, 0, numCarVertices);
+	
 }

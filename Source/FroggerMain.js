@@ -30,6 +30,8 @@ var roundStartTimer, roundEndTimer;
 var cars = [];
 var lumbers = [];
 var numCarsPerLane = 2;
+var numCarVertices,numCowVertices,numSharkVertices,numAppleVertices;
+var numCarNormals,numCowNormals,numSharkNormals,numAppleNormals;
 
 var locTexCoord;
 var colorLoc;
@@ -39,12 +41,32 @@ var proj;
 var mvLoc2;
 var pLoc2;
 
+var carvBuffer;
+var carBuffer;
+var carvNormal;
+var vertices = [];
+var normals = [];
 var cubeBuffer;
 var earthBuffer;
 var trackBuffer;
 var vPosition1;
 var vPosition2;
+var tBuffer;
 
+
+//Phong dót
+var lightPosition = vec4(4.0, 4.0, 4.0, 0.0 );
+var lightAmbient = vec4(1.0, 1.0, 1.0, 1.0 );
+var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+
+var materialAmbient = vec4( 0.2, 0.0, 0.2, 1.0 );
+var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+var materialShininess = 50.0;
+var modelViewMatrix, projectionMatrix;
+var modelViewMatrixLoc, projectionMatrixLoc;
+var normalMatrix, normalMatrixLoc;
 
 // the 36 vertices of the cube
 var cVertices = [
@@ -153,14 +175,43 @@ window.onload = function init()
     canvas = document.getElementById( "gl-canvas" );
     
     gl = WebGLUtils.setupWebGL( canvas );
+	var PR = PlyReader();
+	var plyData = PR.read("bill.ply");
+	vertices = plyData.points;
+	normals = plyData.normals;
+	numCarVertices = plyData.points.length;
+	
+	plyData = PR.read("cow.ply");
+	vertices = vertices.concat(plyData.points);
+	normals = normals.concat(plyData.normals);
+	numCowVertices = plyData.points.length;
+	numCowNormals = plyData.normals.length;
+	
+	plyData = PR.read("hakarl.ply");
+	vertices = vertices.concat(plyData.points);
+	normals = normals.concat(plyData.normals);
+	numSharkVertices = plyData.points.length;
+	numSharkNormals = plyData.normals.length;
+	
+	plyData = PR.read("apple.ply");
+	vertices = vertices.concat(plyData.points);
+	normals = normals.concat(plyData.normals);
+	numAppleVertices = plyData.points.length;
+	numAppleNormals = plyData.normals.length;
 	
 	initCars();
 	initLumbers();	
+	apple = new Apple();
 	frog = new Frog();
 	htmlLives = document.getElementById( "livesLeft" );
 	htmlPoints = document.getElementById( "points" );
 	htmlTimeLeft = document.getElementById( "timeLeft" );
 	
+
+	ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
@@ -179,24 +230,40 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(cVertices), gl.STATIC_DRAW );
 
+	//Bílabuffer og dót
+	carBuffer = gl.createBuffer();
+	gl.bindBuffer( gl.ARRAY_BUFFER, carBuffer );
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW );
+	carvNormal = gl.getAttribLocation( program1, "vNormal" );
+    gl.vertexAttribPointer( carvNormal, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( carvNormal );
+    carvBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, carvBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW );
+	
+	//Beljubuffer og dót
+	
+	
+	
+	
+	
     //vPosition fyrir program1
     vPosition1 = gl.getAttribLocation( program1, "vPosition" );
-    gl.vertexAttribPointer( vPosition1, 3, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer( vPosition1, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition1 );
 
     colorLoc = gl.getUniformLocation( program1, "fColor" );
 
-    //ModelViewLoc fyrir program1
-    mvLoc1 = gl.getUniformLocation( program1, "modelview" );
-    //ProjectionLoc fyrir program1
-    pLoc1 = gl.getUniformLocation( program1, "projection" );
+    modelViewMatrixLoc = gl.getUniformLocation( program1, "modelViewMatrix" );
+    projectionMatrixLoc = gl.getUniformLocation( program1, "projectionMatrix" );
+    normalMatrixLoc = gl.getUniformLocation( program1, "normalMatrix" );
 
     //SKOÐA DRAW FÖLLIN, PASSA AÐ RÉTT vPosition sé notað (1 eða 2) SAMA MEÐ mvLoc
 
     //<------Texture program og location binders----------->
     // Litarar sem lita með mynstri (texture)
     program2 = initShaders( gl, "vertex-shader2", "fragment-shader2" );
-
+	gl.useProgram(program2);
     earthBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(earthCoords), gl.STATIC_DRAW );
@@ -206,31 +273,32 @@ window.onload = function init()
     vPosition2 = gl.getAttribLocation( program2, "vPosition" );
     gl.enableVertexAttribArray( vPosition2 );
     
-    var tBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoords), gl.STATIC_DRAW );
-
-    locTexCoord = gl.getAttribLocation( program2, "vTexCoord" );
-    gl.vertexAttribPointer( locTexCoord, 2, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( locTexCoord );
+      tBuffer = gl.createBuffer();
+      gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
+      gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoords), gl.STATIC_DRAW );
 
     mvLoc2 = gl.getUniformLocation( program2, "modelview" );
     //ProjectionLoc fyrir program2
     pLoc2 = gl.getUniformLocation( program2, "projection" );
 
-    gl.enable( gl.MULTISAMPLE );
+    //gl.enable( gl.MULTISAMPLE );
 
     //<----Setjum projection á progrömin---->
     proj = perspective( 50.0, 1.0, 1.0, 500.0 );
     gl.useProgram(program1);
-    gl.uniformMatrix4fv(pLoc1, false, flatten(proj));
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(proj));
     
     gl.useProgram(program2);
     gl.uniformMatrix4fv(pLoc2, false, flatten(proj));
-
+	
     //Textures ekki implementað strax, notum program1
     gl.useProgram(program1);
-            
+    gl.uniform4fv( gl.getUniformLocation(program1, "ambientProduct"), flatten(ambientProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program1, "diffuseProduct"), flatten(diffuseProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program1, "specularProduct"), flatten(specularProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program1, "lightPosition"), flatten(lightPosition) );
+    gl.uniform1f( gl.getUniformLocation(program1, "shininess"), materialShininess );
+        
 	canvas.addEventListener("mousedown", function(e){
 	movement = true;
 	origX = e.clientX;
@@ -354,7 +422,7 @@ function render()
   gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
 
-  var mv = mat4();
+   // var mv = mat4();
 	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
 	mv = mult(mv, rotateY( spinX ));
 	mv = mult(mv, rotateX( spinY ));
@@ -362,23 +430,23 @@ function render()
 	//lagað það og sleppt þessu en þetta virkar.
 	mv = mult( mv, rotateZ( 90 ) );
 	
-  gl.useProgram(program1);
-  gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
-  gl.vertexAttribPointer( pLoc1, 3, gl.FLOAT, false, 0, 0 );
+
+	
+	gl.useProgram(program1);
 	for(var i = 0; i<cars.length; i++){
 		cars[i].draw(mv, gl);
 	}
 	for(var i = 0; i<lumbers.length; i++){
 		lumbers[i].draw(mv, gl);
 	}
-	
-	frog.updateMovement(cars, lumbers);
+	apple.draw(mv, gl);
+	frog.updateMovement(cars, lumbers, apple);
 	frog.draw(mv, gl);
 
-	gl.useProgram(program2);
-  gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
-  gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
-	drawGround( mv );
+		gl.useProgram(program2);
+		gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
+		gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
+		drawGround( mv );
 	//mv = mult( mv, rotateZ( -carDirection ) );
 	//mv = mult( mv, translate(carXPos, carYPos, 0.0) );
 
