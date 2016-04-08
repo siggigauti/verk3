@@ -314,11 +314,15 @@ window.onload = function init()
       gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
       gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoords), gl.STATIC_DRAW );
 
+    locTexCoord = gl.getAttribLocation( program2, "vTexCoord" );
+    gl.vertexAttribPointer( locTexCoord, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( locTexCoord );
+
     mvLoc2 = gl.getUniformLocation( program2, "modelview" );
     //ProjectionLoc fyrir program2
     pLoc2 = gl.getUniformLocation( program2, "projection" );
 
-    //gl.enable( gl.MULTISAMPLE );
+    gl.enable( gl.MULTISAMPLE );
 
     //<----Setjum projection á progrömin---->
     proj = perspective( 50.0, 1.0, 1.0, 500.0 );
@@ -485,6 +489,8 @@ function render()
 
 	
 	gl.useProgram(program1);
+  gl.bindBuffer( gl.ARRAY_BUFFER, carvBuffer );
+  gl.vertexAttribPointer( vPosition1, 4, gl.FLOAT, false, 0, 0 );
 	for(var i = 0; i<cars.length; i++){
 		cars[i].draw(mv, gl);
 	}

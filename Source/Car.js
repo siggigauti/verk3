@@ -71,8 +71,7 @@ Car.prototype.draw = function( mv, gl ){
 	gl.uniform4fv( gl.getUniformLocation(program1, "diffuseProduct"), flatten(diffuseProduct) );
     //gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
     //gl.vertexAttribPointer( pLoc1, 3, gl.FLOAT, false, 0, 0 );
-	gl.bindBuffer( gl.ARRAY_BUFFER, carvBuffer );
-	gl.vertexAttribPointer( vPosition1, 4, gl.FLOAT, false, 0, 0 );
+	
     //gl.enableVertexAttribArray( vPosition1 );
 	mv = mult(mv, translate(this.xPos, this.yPos, 0.4));
 	mv = mult(mv, rotateX(-90));
