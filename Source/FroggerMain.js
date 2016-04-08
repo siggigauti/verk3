@@ -41,15 +41,15 @@ var proj;
 var mvLoc2;
 var pLoc2;
 
-<<<<<<< HEAD
+
 var carvBuffer;
 var carBuffer;
 var carvNormal;
 var vertices = [];
 var normals = [];
-=======
 
->>>>>>> origin/master
+
+
 var cubeBuffer;
 var earthBuffer;
 var trackBuffer;
@@ -99,7 +99,7 @@ var cVertices = [
 ];
 
 var earthCoords = [
-  //Vinningssvæðið er 3x21 ferningur
+  //Vinningssvæðið er 2x10 ferningur
   vec4(10.5, 10.5, 0, 1.0),
   vec4(-10.5, 10.5, 0, 1.0),
   vec4(-10.5, 7.5, 0, 1.0),
@@ -107,19 +107,19 @@ var earthCoords = [
   vec4(10.5, 7.5, 0, 1.0), 
   vec4(-10.5, 7.5, 0, 1.0),
   
-  //Áin er 7x21 ferningur
+  //Áin er 7x10 ferningur
   vec4(10.5, 7.5, 0, 1.0), vec4(-10.5, 7.5, 0, 1.0), vec4(-10.5, 0.5, 0, 1.0),
   vec4(10.5, 7.5, 0, 1.0), vec4(10.5, 0.5, 0, 1.0), vec4(-10.5, 0.5, 0, 1.0),
   
-  //Miðjusvæði er 2x21 ferningur
+  //Miðjusvæði er 2x10 ferningur
   vec4(10.5, 0.5, 0, 1.0), vec4(-10.5, 0.5, 0, 1.0), vec4(-10.5, -1.5, 0, 1.0),
   vec4(10.5, 0.5, 0, 1.0), vec4(10.5, -1.5, 0, 1.0), vec4(-10.5, -1.5, 0, 1.0),
   
-  //Gatan er 7x21 ferningur
+  //Gatan er 7x10 ferningur
   vec4(10.5, -1.5, 0, 1.0), vec4(-10.5,  -1.5, 0, 1.0), vec4(-10.5, -7.5, 0, 1.0),
   vec4(10.5, -1.5, 0, 1.0), vec4(10.5, -7.5, 0, 1.0), vec4(-10.5, -7.5, 0, 1.0),
   
-  //Byrjunarsvæðið er 2x21 ferningur
+  //Byrjunarsvæðið er 2x10 ferningur
   vec4(10.5, -7.5, 0, 1.0), vec4(-10.5, -7.5, 0, 1.0), vec4(-10.5, -10.5, 0, 1.0),
   vec4(10.5, -7.5, 0, 1.0), vec4(10.5, -10.5, 0, 1.0), vec4(-10.5, -10.5, 0, 1.0),
 
@@ -148,40 +148,40 @@ var earthCoords = [
 // Mynsturhnit fyrir spjaldið
 var texCoords = [
 	//Vinningssvæði
-    vec2( 21.0, 3.0 ),
-    vec2( 0.0, 3.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 21.0, 3.0 ),
-    vec2( 21.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
     vec2( 0.0, 0.0 ),
 	
 	//Vatn
-	vec2( 21.0, 7.0 ),
-    vec2( 0.0, 7.0 ),
+	vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 21.0, 7.0 ),
-    vec2( 21.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
     vec2( 0.0, 0.0 ),
 	
 	//Miðjan
-	vec2( 21.0, 2.0 ),
-    vec2( 0.0, 2.0 ),
+	vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 21.0, 2.0 ),
-    vec2( 21.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
     vec2( 0.0, 0.0 ),
 	
 	//Gatan
-	vec2( 21.0, 7.0 ),
-    vec2( 0.0, 7.0 ),
+	vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 21.0, 7.0 ),
-    vec2( 21.0, 0.0 ),
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
     vec2( 0.0, 0.0 ),
 	
 	//Byrjunarsvæði
-	vec2( 21.0, 2.0 ),
-    vec2( 0.0, 2.0 ),
+	vec2( 20.0, 4.0 ),
+    vec2( 0.0, 4.0 ),
     vec2( 0.0, 0.0 ),
     vec2( 21.0, 2.0 ),
     vec2( 21.0, 0.0 ),
@@ -194,6 +194,10 @@ var texCoords = [
   vec2( 35.0, 35.0 ), vec2( 0.0, 35.0 ), vec2( 0.0, 35.0 ), vec2( 0.0, 35.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 35.0 ), //up
   vec2( 0.0, 0.0 ), vec2( 0.0, 35.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 35.0 ), vec2( 35.0, 0.0 ), vec2( 0.0, 0.0 ), //back
   vec2( 0.0, 35.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 0.0 ), vec2( 0.0, 35.0 ), vec2( 0.0, 35.0 ), //left
+   
+    vec2( 20.0, 4.0 ),
+    vec2( 20.0, 0.0 ),
+    vec2( 0.0, 0.0 )
 ];
 
 // vertices of the track
@@ -466,13 +470,13 @@ function render()
   gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
 
-<<<<<<< HEAD
+
    // var mv = mat4();
 	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
-=======
+
   var mv = mat4();
 	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12.0), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
->>>>>>> origin/master
+
 	mv = mult(mv, rotateY( spinX ));
 	mv = mult(mv, rotateX( spinY ));
 	//Þetta rotate lagar að X ásinn virtist vera eins og Y ásinn, gætum kannski
@@ -493,18 +497,18 @@ function render()
 	frog.draw(mv, gl);
   
 
-<<<<<<< HEAD
+
 		gl.useProgram(program2);
 		gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
 		gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
 		drawGround( mv );
-=======
+
 	gl.useProgram(program2);
   gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
   gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
 	drawGround( mv );
   drawSky( mv );
->>>>>>> origin/master
+
 	//mv = mult( mv, rotateZ( -carDirection ) );
 	//mv = mult( mv, translate(carXPos, carYPos, 0.0) );
 
