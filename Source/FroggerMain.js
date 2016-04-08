@@ -58,7 +58,7 @@ var vPosition2;
 var tBuffer;
 
 
-//Phong dÛt
+//Phong d√≥t
 var lightPosition = vec4(4.0, 4.0, 4.0, 0.0 );
 var lightAmbient = vec4(1.0, 1.0, 1.0, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -93,13 +93,13 @@ var cVertices = [
     vec3( -0.5,  0.5, -0.5 ), vec3( -0.5, -0.5, -0.5 ), vec3( -0.5, -0.5,  0.5 ),
     vec3( -0.5, -0.5,  0.5 ), vec3( -0.5,  0.5,  0.5 ), vec3( -0.5,  0.5, -0.5 )
 	
-	//Jˆrin byrjar Ì 36
+	//J√∂r√∞in byrjar √≠ 36
 	
 	
 ];
 
 var earthCoords = [
-  //VinningssvÊi er 2x10 ferningur
+  //Vinningssv√¶√∞i√∞ er 2x10 ferningur
   vec4(10.5, 10.5, 0, 1.0),
   vec4(-10.5, 10.5, 0, 1.0),
   vec4(-10.5, 7.5, 0, 1.0),
@@ -107,11 +107,11 @@ var earthCoords = [
   vec4(10.5, 7.5, 0, 1.0), 
   vec4(-10.5, 7.5, 0, 1.0),
   
-  //¡in er 7x10 ferningur
+  //√Åin er 7x10 ferningur
   vec4(10.5, 7.5, 0, 1.0), vec4(-10.5, 7.5, 0, 1.0), vec4(-10.5, 0.5, 0, 1.0),
   vec4(10.5, 7.5, 0, 1.0), vec4(10.5, 0.5, 0, 1.0), vec4(-10.5, 0.5, 0, 1.0),
   
-  //MijusvÊi er 2x10 ferningur
+  //Mi√∞jusv√¶√∞i er 2x10 ferningur
   vec4(10.5, 0.5, 0, 1.0), vec4(-10.5, 0.5, 0, 1.0), vec4(-10.5, -1.5, 0, 1.0),
   vec4(10.5, 0.5, 0, 1.0), vec4(10.5, -1.5, 0, 1.0), vec4(-10.5, -1.5, 0, 1.0),
   
@@ -119,7 +119,7 @@ var earthCoords = [
   vec4(10.5, -1.5, 0, 1.0), vec4(-10.5,  -1.5, 0, 1.0), vec4(-10.5, -7.5, 0, 1.0),
   vec4(10.5, -1.5, 0, 1.0), vec4(10.5, -7.5, 0, 1.0), vec4(-10.5, -7.5, 0, 1.0),
   
-  //ByrjunarsvÊi er 2x10 ferningur
+  //Byrjunarsv√¶√∞i√∞ er 2x10 ferningur
   vec4(10.5, -7.5, 0, 1.0), vec4(-10.5, -7.5, 0, 1.0), vec4(-10.5, -10.5, 0, 1.0),
   vec4(10.5, -7.5, 0, 1.0), vec4(10.5, -10.5, 0, 1.0), vec4(-10.5, -10.5, 0, 1.0),
 
@@ -145,43 +145,43 @@ var earthCoords = [
 
 ];
 
-// Mynsturhnit fyrir spjaldi
+// Mynsturhnit fyrir spjaldi√∞
 var texCoords = [
-	//VinningssvÊi
-    vec2( 20.0, 4.0 ),
-    vec2( 0.0, 4.0 ),
+	//Vinningssvi
+    vec2( 21.0, 3.0 ),
+    vec2( 0.0, 3.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 20.0, 4.0 ),
-    vec2( 20.0, 0.0 ),
+    vec2( 21.0, 3.0 ),
+    vec2( 21.0, 0.0 ),
     vec2( 0.0, 0.0 ),
-	
-	//Vatn
-	vec2( 20.0, 4.0 ),
-    vec2( 0.0, 4.0 ),
+  
+  //Vatn
+  vec2( 21.0, 7.0 ),
+    vec2( 0.0, 7.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 20.0, 4.0 ),
-    vec2( 20.0, 0.0 ),
+    vec2( 21.0, 7.0 ),
+    vec2( 21.0, 0.0 ),
     vec2( 0.0, 0.0 ),
-	
-	//Mijan
-	vec2( 20.0, 4.0 ),
-    vec2( 0.0, 4.0 ),
+  
+  //Mijan
+  vec2( 21.0, 2.0 ),
+    vec2( 0.0, 2.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 20.0, 4.0 ),
-    vec2( 20.0, 0.0 ),
+    vec2( 21.0, 2.0 ),
+    vec2( 21.0, 0.0 ),
     vec2( 0.0, 0.0 ),
-	
-	//Gatan
-	vec2( 20.0, 4.0 ),
-    vec2( 0.0, 4.0 ),
+  
+  //Gatan
+  vec2( 21.0, 7.0 ),
+    vec2( 0.0, 7.0 ),
     vec2( 0.0, 0.0 ),
-    vec2( 20.0, 4.0 ),
-    vec2( 20.0, 0.0 ),
+    vec2( 21.0, 7.0 ),
+    vec2( 21.0, 0.0 ),
     vec2( 0.0, 0.0 ),
-	
-	//ByrjunarsvÊi
-	vec2( 20.0, 4.0 ),
-    vec2( 0.0, 4.0 ),
+  
+  //Byrjunarsvi
+  vec2( 21.0, 2.0 ),
+    vec2( 0.0, 2.0 ),
     vec2( 0.0, 0.0 ),
     vec2( 21.0, 2.0 ),
     vec2( 21.0, 0.0 ),
@@ -258,16 +258,16 @@ window.onload = function init()
 
 
     //<------Uniform color program og location binders----------->
-    // Litarar sem lite me einum lit (uniform)
+    // Litarar sem lite me√∞ einum lit (uniform)
     program1 = initShaders( gl, "vertex-shader", "fragment-shader" );
-    gl.useProgram( program1 ); //Hvaa program · a nota?
+    gl.useProgram( program1 ); //Hva√∞a program √° a√∞ nota?
 
-    //Buffer fyrir ˆll hnitin.
+    //Buffer fyrir √∂ll hnitin.
     cubeBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cubeBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(cVertices), gl.STATIC_DRAW );
 
-	//BÌlabuffer og dÛt
+	//B√≠labuffer og d√≥t
 	carBuffer = gl.createBuffer();
 	gl.bindBuffer( gl.ARRAY_BUFFER, carBuffer );
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW );
@@ -278,7 +278,7 @@ window.onload = function init()
     gl.bindBuffer( gl.ARRAY_BUFFER, carvBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW );
 	
-	//Beljubuffer og dÛt
+	//Beljubuffer og d√≥t
 	
 	
 	
@@ -295,18 +295,18 @@ window.onload = function init()
     projectionMatrixLoc = gl.getUniformLocation( program1, "projectionMatrix" );
     normalMatrixLoc = gl.getUniformLocation( program1, "normalMatrix" );
 
-    //SKO–A DRAW F÷LLIN, PASSA A– R…TT vPosition sÈ nota (1 ea 2) SAMA ME– mvLoc
+    //SKO√êA DRAW F√ñLLIN, PASSA A√ê R√âTT vPosition s√© nota√∞ (1 e√∞a 2) SAMA ME√ê mvLoc
 
     //<------Texture program og location binders----------->
-    // Litarar sem lita me mynstri (texture)
+    // Litarar sem lita me√∞ mynstri (texture)
     program2 = initShaders( gl, "vertex-shader2", "fragment-shader2" );
 	gl.useProgram(program2);
     earthBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(earthCoords), gl.STATIC_DRAW );
 
-    //Muna a skipta myndunum me configureTexture( image, program2 ); 
-    //ﬁar sem image er var image = document.getElementById("id · image")
+    //Muna a√∞ skipta myndunum me√∞ configureTexture( image, program2 ); 
+    //√ûar sem image er var image = document.getElementById("id √° image")
     vPosition2 = gl.getAttribLocation( program2, "vPosition" );
     gl.enableVertexAttribArray( vPosition2 );
     
@@ -320,7 +320,7 @@ window.onload = function init()
 
     //gl.enable( gl.MULTISAMPLE );
 
-    //<----Setjum projection · progrˆmin---->
+    //<----Setjum projection √° progr√∂min---->
     proj = perspective( 50.0, 1.0, 1.0, 500.0 );
     gl.useProgram(program1);
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(proj));
@@ -328,7 +328,7 @@ window.onload = function init()
     gl.useProgram(program2);
     gl.uniformMatrix4fv(pLoc2, false, flatten(proj));
 	
-    //Textures ekki implementa strax, notum program1
+    //Textures ekki implementa√∞ strax, notum program1
     gl.useProgram(program1);
     gl.uniform4fv( gl.getUniformLocation(program1, "ambientProduct"), flatten(ambientProduct) );
     gl.uniform4fv( gl.getUniformLocation(program1, "diffuseProduct"), flatten(diffuseProduct) );
@@ -414,10 +414,10 @@ function initLumbers(){
 
 function drawGround( mv ){
 	
-	//Teiknar vinningsjˆrina
+	//Teiknar vinningsj√∂r√∞ina
 	//gl.uniform4fv( colorLoc, RED );
 	var image = document.getElementById("texImage");
-	//Textures sem vi notum:
+	//Textures sem vi√∞ notum:
 	var water = document.getElementById("waterImage");
 	var grass = document.getElementById("grassImage");
 	var concrete = document.getElementById("concreteImage");
@@ -426,7 +426,7 @@ function drawGround( mv ){
 	gl.drawArrays( gl.TRIANGLES, 0, 6 );
 	
 	
-	//Teiknar vatni
+	//Teiknar vatni√∞
 	//gl.uniform4fv( colorLoc, WATERBLUE );
 	configureTexture(water, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
@@ -439,13 +439,13 @@ function drawGround( mv ){
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
 	gl.drawArrays( gl.TRIANGLES, 12, 6 );
 
-	//Teiknar gˆtuna
+	//Teiknar g√∂tuna
 	//gl.uniform4fv( colorLoc, BLACK );
 	configureTexture(concrete, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
 	gl.drawArrays( gl.TRIANGLES, 18, 6 );
 	
-	//Byrjunarjˆrin
+	//Byrjunarj√∂r√∞in
 	//gl.uniform4fv( colorLoc, RED );
 	configureTexture(grass, program2);
 	gl.uniformMatrix4fv(mvLoc2, false, flatten(mv));
@@ -471,16 +471,15 @@ function render()
 	
 
 
-   // var mv = mat4();
-	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
+   
 
   var mv = mat4();
 	mv = lookAt( vec3(-25.0+frog.yPos, -frog.xPos, 12.0), vec3(frog.yPos, -frog.xPos, 4.0), vec3(0.0, 0.0, 1.0 ) );
 
 	mv = mult(mv, rotateY( spinX ));
 	mv = mult(mv, rotateX( spinY ));
-	//ﬁetta rotate lagar a X ·sinn virtist vera eins og Y ·sinn, gÊtum kannski
-	//laga ˛a og sleppt ˛essu en ˛etta virkar.
+	//√ûetta rotate lagar a√∞ X √°sinn virtist vera eins og Y √°sinn, g√¶tum kannski
+	//laga√∞ √æa√∞ og sleppt √æessu en √æetta virkar.
 	mv = mult( mv, rotateZ( 90 ) );
 	
 
@@ -496,12 +495,6 @@ function render()
 	frog.updateMovement(cars, lumbers, apple);
 	frog.draw(mv, gl);
   
-
-
-		gl.useProgram(program2);
-		gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );
-		gl.vertexAttribPointer( pLoc2, 4, gl.FLOAT, false, 0, 0 );
-		drawGround( mv );
 
 	gl.useProgram(program2);
   gl.bindBuffer( gl.ARRAY_BUFFER, earthBuffer );

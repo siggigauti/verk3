@@ -5,6 +5,7 @@
 attribute vec4 vPosition;
 attribute vec4 vNormal;
 varying vec3 N, L, E;
+varying vec3 pos;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform vec4 lightPosition;
@@ -12,7 +13,7 @@ uniform mat3 normalMatrix;
 
 void main()
 {
-    vec3 pos = (modelViewMatrix * vPosition).xyz;
+    pos = (modelViewMatrix * vPosition).xyz;
 
 
     // check for directional light
@@ -28,7 +29,6 @@ void main()
 
 uniform mat4 projection;
 uniform mat4 modelview;
-varying vec3 pos;
 
 </script>
 
@@ -84,12 +84,13 @@ attribute  vec4 vPosition;
 attribute  vec2 vTexCoord;
 
 varying vec2 fTexCoord;
-
+varying vec3 pos;
 uniform mat4 projection;
 uniform mat4 modelview;
 
 void main()
 {
+    vec3 pos = (modelview * vPosition).xyz;
     fTexCoord = vTexCoord;
     gl_Position = projection * modelview * vPosition;
 }
@@ -99,13 +100,16 @@ void main()
 // Vertex shader for textured object
 
 precision mediump float;
-
+varying vec3 pos;
 varying vec2 fTexCoord;
 uniform sampler2D texture;
 
 void main()
 {
-    gl_FragColor = texture2D( texture, fTexCoord );
+    if(pos.x < -10.5 || pos.x > 10.5)
+      discard;
+    else
+      gl_FragColor = texture2D( texture, fTexCoord );
 }
 </script>
 
