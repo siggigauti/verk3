@@ -1,6 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="Common/style.css">
 <script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec4 vPosition;
 attribute vec4 vNormal;
@@ -13,17 +14,17 @@ uniform mat3 normalMatrix;
 
 void main()
 {
-    pos = (modelViewMatrix * vPosition).xyz;
+  pos = (modelViewMatrix * vPosition).xyz;
 
 
-    // check for directional light
-    if(lightPosition.w == 0.0) L = normalize(lightPosition.xyz);
-    else L = normalize( lightPosition.xyz - pos );
+  // check for directional light
+  if(lightPosition.w == 0.0) L = normalize(lightPosition.xyz);
+  else L = normalize( lightPosition.xyz - pos );
 
-    E =  -normalize(pos);
-    N = normalize( normalMatrix*vNormal.xyz);
+  E =  -normalize(pos);
+  N = normalize( normalMatrix*vNormal.xyz);
 
-    gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+  gl_Position = projectionMatrix * modelViewMatrix * vPosition;
 
 }
 
@@ -51,28 +52,28 @@ varying vec3 N, L, E;
 void main()
 {
 
-    vec4 fColor;
+  vec4 fColor;
 
-    vec3 H = normalize( L + E );
-    vec4 ambient = ambientProduct;
+  vec3 H = normalize( L + E );
+  vec4 ambient = ambientProduct;
 
-    float Kd = max( dot(L, N), 0.0 );
-    vec4  diffuse = Kd*diffuseProduct;
+  float Kd = max( dot(L, N), 0.0 );
+  vec4  diffuse = Kd*diffuseProduct;
 
-    float Ks = pow( max(dot(N, H), 0.0), shininess );
-    vec4  specular = Ks * specularProduct;
+  float Ks = pow( max(dot(N, H), 0.0), shininess );
+  vec4  specular = Ks * specularProduct;
 
-    if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+  if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
 
-    fColor = ambient + diffuse +specular;
-    fColor.a = 1.0;
+  fColor = ambient + diffuse +specular;
+  fColor.a = 1.0;
 
+  gl_FragColor = fColor;
+
+  if(pos.x < -10.5-offset || pos.x > 10.5-offset)
+    discard;
+  else
     gl_FragColor = fColor;
-
-    if(pos.x < -10.5-offset || pos.x > 10.5-offset)
-      discard;
-    else
-      gl_FragColor = fColor;
 
 }
 </script>
@@ -90,9 +91,9 @@ uniform mat4 modelview;
 
 void main()
 {
-    vec3 pos = (modelview * vPosition).xyz;
-    fTexCoord = vTexCoord;
-    gl_Position = projection * modelview * vPosition;
+  vec3 pos = (modelview * vPosition).xyz;
+  fTexCoord = vTexCoord;
+  gl_Position = projection * modelview * vPosition;
 }
 </script>
 
@@ -106,10 +107,10 @@ uniform sampler2D texture;
 
 void main()
 {
-    if(pos.x < -10.5 || pos.x > 10.5)
-      discard;
-    else
-      gl_FragColor = texture2D( texture, fTexCoord );
+  if(pos.x < -10.5 || pos.x > 10.5)
+    discard;
+  else
+    gl_FragColor = texture2D( texture, fTexCoord );
 }
 </script>
 
@@ -128,15 +129,29 @@ void main()
 <img id = "texImage" src = "Common/test.jpg" hidden></img>
 </head>
 <body>
-<canvas id="gl-canvas" width="1000" height="1000">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
-<p id="points"></p>
-<p id="livesLeft"></p>
-<p id="timeLeft"></p>
-
-
-<br/>
-
+  <div class="wrapper">
+    <div id="gameRules">
+      <p id="important">The game rules:</p>
+      <p>You are the cow, you really, really want that delicious apple across the dangerous path.</p>
+      </br>
+      <p>You move the cow with the keys: W, A, S, and D. Go ahead, try it!</p>
+      </br>
+      <p>If a car hits you, you die. If you fall in the water you die, so watch out!</p>
+      </br>
+      <p>You have 3 lives, and 60 seconds to get the apple.</p>
+      </br>
+      <p>Scores are kept to the right. Good luck!</p>
+    </div>
+    <div id="canvasElement">
+      <canvas id="gl-canvas" width="1000" height="1000">
+        Oops ... your browser doesn't support the HTML5 canvas element
+      </canvas>
+    </div>
+    <div id="gameScore">
+      <p id="points"></p>
+      <p id="livesLeft"></p>
+      <p id="timeLeft"></p>
+    </div>
+  </div>
 </body>
 </html>
